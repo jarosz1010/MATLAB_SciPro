@@ -1,0 +1,52 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%{
+Program doing 1D function interpolation with different windows.
+To change window comment/uncomment lines.
+%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+clear;
+n = 100; % Original function number of samples
+N = 100; % Interpolated function number of samples
+x = linspace(0,2*3.14,n);
+odj = linspace(0,n,n);
+Fn = sin(2*x);
+X = linspace(0,length(Fn),N);
+Xp = linspace(0,6.28,N);
+FX = zeros(1, N);
+anew = zeros(1,n);
+for i = 1:N
+    a = X(i) - odj;
+    for j = 1:n
+        %anew(j) = window(a(j), -0.5, 0.5);
+        %anew(j) = triangle(a(j));
+        anew(j) = Keys(a(j));
+        FX(i) = FX(i) + Fn(j) * anew(j);
+    end    
+end
+
+
+figure(1);
+subplot(2,1,1);
+plot(x, Fn);
+title("Original function");
+subplot(2,1,2);
+plot(Xp, FX);
+title("Interpolated function");
+
+
+% Below definitions of interpolating functions: 
+function ok = window(x, l, m)
+   ok = (x >= l) .* (x < m);
+end
+
+function ok = triangle(x)
+   ok = window(x,-1,1) * (1-abs(x));
+end
+
+function ok = Keys(x)
+    x = abs(x);
+    a = -0.5;
+    ok = ((a + 2)*x^3 - (a + 3)*x^2 + 1) * window(x, 0, 1)+ (a * x^3 - 5*a * x^2 + 8*a * x - 4*a) * window(x, 0, 2) * (1 - window(x, 0, 1));
+
+end
